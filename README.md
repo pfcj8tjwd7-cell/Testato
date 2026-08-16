@@ -33,3 +33,20 @@ metricas# xychart-beta
     x-axis ["ES0901", "ES0902", "ES0903", "ES0904", "ES0905", "ES0906", "ES0907", "ES0908", "ES0909", "ES1001", "ES1002", "ES1003"]
     y-axis "Disponibilidade (%)" 0 --> 100
     bar [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+metricas# xychart-beta
+    title "Evolução da Disponibilidade"
+    x-axis ["Semana 1", "Semana 2", "Semana 3", "Semana 4"]
+    y-axis "Disponibilidade (%)" 0 --> 100
+    line [67.2, 0, 0, 0]
+metricas#flowchart LR
+    A["📡 Monitoramento"] --> B{"Sensor Offline?"}
+    B -->|Não| C["🟢 Operação Normal"]
+    B -->|Sim| D["🔎 Diagnóstico"]
+    D --> E{"Causa Identificada?"}
+    E -->|Sim| F["🔧 Manutenção"]
+    E -->|Não| G["🧪 Investigação"]
+    G --> F
+    F --> H["📡 Teste de Comunicação"]
+    H --> I{"Sensor Online?"}
+    I -->|Sim| J["✅ Encerramento"]
+    I -->|Não| D

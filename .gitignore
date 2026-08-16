@@ -1,4 +1,284 @@
-.sass-cache/
+.sass-cache/import { createFileRoute } from "@tanstack/react-router";
+import {
+  Bar,
+  BarChart,
+  Cell,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+
+export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Manutenção de Sensores de Vibração | Escavadeiras" },
+      {
+        name: "description",
+        content:
+          "Painel de acompanhamento da manutenção de sensores de vibração: pontos online, offline e disponibilidade por escavadeira.",
+      },
+      {
+        property: "og:title",
+        content: "Manutenção de Sensores de Vibração | Escavadeiras",
+      },
+      {
+        property: "og:description",
+        content:
+          "Indicadores de disponibilidade e pontos online por escavadeira em tempo real.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+  component: Dashboard,
+});
+
+const resumo = {
+  totalEscavadeiras: 12,
+  pontosOnline: 39,
+  pontosOffline: 19,
+  disponibilidade: 67.2,
+  percentualOffline: 32.8,
+};
+
+const escavadeiras = [
+  { nome: "ES 0904", pontos: 58 },
+  { nome: "ES 0907", pontos: 55 },
+  { nome: "ES 1002", pontos: 52 },
+  { nome: "ES 0902", pontos: 50 },
+  { nome: "ES 1001", pontos: 47 },
+  { nome: "ES 0901", pontos: 44 },
+  { nome: "ES 0905", pontos: 40 },
+  { nome: "ES 0903", pontos: 39 },
+];
+
+const chartColors = [
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-4)",
+  "var(--chart-5)",
+];
+
+const maxPontos = Math.max(...escavadeiras.map((e) => e.pontos));
+const totalPontos = escavadeiras.reduce((acc, e) => acc + e.pontos, 0);
+
+function Kpi({
+  label,
+  value,
+  hint,
+  accent,
+}: {
+  label: string;
+  value: string;
+  hint?: string;
+  accent?: "positive" | "negative";
+}) {
+  return (
+    <Card className="border-border/60">
+      <CardContent className="p-4">
+        <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">
+          {label}
+        </p>
+        <p
+          className={`mt-2 font-mono text-3xl font-semibold tabular-nums ${
+            accent === "positive"
+              ? "text-primary"
+              : accent === "negative"
+                ? "text-destructive"
+                : "text-foreground"
+          }`}
+        >
+          {value}
+        </p>
+        {hint ? (
+          <p className="mt-1 text-xs text-muted-foreground">{hint}</p>
+        ) : null}
+      </CardContent>
+    </Card>
+  );
+}
+
+function Dashboard() {
+  return (
+    <main className="min-h-screen bg-background px-4 py-8 md:px-8">
+      <div className="mx-auto max-w-6xl space-y-8">
+        <header className="space-y-2">
+          <Badge variant="secondary" className="font-mono text-[10px] uppercase tracking-widest">
+            Monitoramento preditivo
+          </Badge>
+          <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">
+            Acompanhamento de Manutenção de Sensores de Vibração
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Indicadores gerais da frota de escavadeiras e distribuição de pontos
+            online por equipamento.
+          </p>
+        </header>
+
+        <section className="grid grid-cols-2 gap-3 md:grid-cols-5">
+          <Kpi label="Escavadeiras" value={String(resumo.totalEscavadeiras)} hint="Frota monitorada" />
+          <Kpi label="Pontos online" value={String(resumo.pontosOnline)} accent="positive" hint="Sensores ativos" />
+          <Kpi label="Pontos offline" value={String(resumo.pontosOffline)} accent="negative" hint="Requerem manutenção" />
+          <Kpi
+            label="Disponibilidade"
+            value={`${resumo.disponibilidade.toLocaleString("pt-BR")}%`}
+            accent="positive"
+          />
+          <Kpi
+            label="Sensores offline"
+            value={`${resumo.percentualOffline.toLocaleString("pt-BR")}%`}
+            accent="negative"
+          />
+        </section>
+
+        <Card className="border-border/60">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Disponibilidade total</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Progress value={resumo.disponibilidade} className="h-3" />
+            <div className="flex justify-between font-mono text-xs text-muted-foreground">
+              <span>Online {resumo.disponibilidade.toLocaleString("pt-BR")}%</span>
+              <span>Offline {resumo.percentualOffline.toLocaleString("pt-BR")}%</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <section className="grid gap-6 lg:grid-cols-2">
+          <Card className="border-border/60">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Pontos online por escavadeira</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[320px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={escavadeiras}
+                    layout="vertical"
+                    margin={{ left: 8, right: 24, top: 8, bottom: 8 }}
+                  >
+                    <XAxis type="number" hide domain={[0, maxPontos]} />
+                    <YAxis
+                      type="category"
+                      dataKey="nome"
+                      width={70}
+                      tickLine={false}
+                      axisLine={false}
+                      tick={{ fontSize: 12, fill: "var(--muted-foreground)" }}
+                    />
+                    <Tooltip
+                      cursor={{ fill: "var(--muted)", opacity: 0.3 }}
+                      contentStyle={{
+                        background: "var(--popover)",
+                        border: "1px solid var(--border)",
+                        borderRadius: 8,
+                        color: "var(--popover-foreground)",
+                        fontSize: 12,
+                      }}
+                    />
+                    <Bar dataKey="pontos" name="Pontos online" radius={[0, 6, 6, 0]}>
+                      {escavadeiras.map((e, i) => (
+                        <Cell key={e.nome} fill={chartColors[i % chartColors.length]} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-border/60">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Distribuição de pontos online</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[320px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={escavadeiras}
+                      dataKey="pontos"
+                      nameKey="nome"
+                      innerRadius={65}
+                      outerRadius={110}
+                      paddingAngle={2}
+                      stroke="var(--background)"
+                    >
+                      {escavadeiras.map((e, i) => (
+                        <Cell key={e.nome} fill={chartColors[i % chartColors.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        background: "var(--popover)",
+                        border: "1px solid var(--border)",
+                        borderRadius: 8,
+                        color: "var(--popover-foreground)",
+                        fontSize: 12,
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                {escavadeiras.map((e, i) => (
+                  <div key={e.nome} className="flex items-center gap-2">
+                    <span
+                      className="size-2.5 rounded-full"
+                      style={{ background: chartColors[i % chartColors.length] }}
+                    />
+                    <span className="text-muted-foreground">{e.nome}</span>
+                    <span className="ml-auto font-mono tabular-nums">
+                      {((e.pontos / totalPontos) * 100).toFixed(1)}%
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
+        <section className="space-y-3">
+          <h2 className="text-lg font-semibold tracking-tight">Detalhe por escavadeira</h2>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {escavadeiras.map((e, i) => (
+              <Card key={e.nome} className="border-border/60">
+                <CardContent className="space-y-3 p-4">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-sm font-semibold">{e.nome}</span>
+                    <Badge variant="outline" className="font-mono text-[10px]">
+                      {e.pontos} pts
+                    </Badge>
+                  </div>
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                    <div
+                      className="h-full rounded-full"
+                      style={{
+                        width: `${(e.pontos / maxPontos) * 100}%`,
+                        background: chartColors[i % chartColors.length],
+                      }}
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {((e.pontos / totalPontos) * 100).toFixed(1)}% do total monitorado
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+      </div>
+    </main>
+  );
+}
+
 *.css.map
 *.sass.map
 *.scss.map

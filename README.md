@@ -30,13 +30,5 @@ pie title Pontos Online por Escavadeira
     "ES 0902" : 50
     "ES 1001" : 47
     "ES 0901" : 44
-Como funciona cada parte:
-- **Tabela de indicadores**: substitui os "cartões" de números do topo.
-- **Barras com blocos ████**: simula o gráfico de barras (não tem gráfico de barras nativo no GitHub Markdown, então uso caracteres de bloco).
-- **Mermaid `pie`**: renderiza um gráfico de pizza real, interativo visualmente no README.
-
-Quer que eu monte a versão final já com os números reais do seu dashboard (todas as escavadeiras, offline também, e disponibilidade por data)? Se sim, me passa os valores ou uma tabela com os dados que aparecem no Power BI.
-
-
 
 

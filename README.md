@@ -1,5 +1,5 @@
 # Testato
-Metricas# }# 📊 Dashboard de Manutenção de Sensores de Vibração
+# 📊 Dashboard de Manutenção de Sensores de Vibração
 
 Dashboard operacional para acompanhamento de **sensores de vibração**, disponibilidade da frota e registros de **instalação, inspeção e manutenção corretiva**.
 
